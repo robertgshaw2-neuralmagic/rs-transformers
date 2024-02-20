@@ -75,8 +75,8 @@ model_kwargs["output_hidden_states"] = model.generation_config.output_hidden_sta
 model_kwargs["use_cache"] = model.generation_config.use_cache
 
 # RUN THROUGH THE ENCODER
+# COPIED FROM GENERATION UTILS - model._prepare_encoder_decoder_kwargs_for_generation()
 # https://github.com/huggingface/transformers/blob/f7ef7cec6c6c162087421f36a17eabdbb223579d/src/transformers/generation/utils.py#L487
-# model._prepare_encoder_decoder_kwargs_for_generation()
 irrelevant_prefix = ["decoder_", "cross_attn", "use_cache"]
 encoder_kwargs = {
     argument: value
@@ -91,6 +91,8 @@ model_kwargs["encoder_outputs"] = model.model.encoder(**encoder_kwargs)
 input_ids = model_kwargs.pop("decoder_input_ids")
 input_ids_length = input_ids.shape[-1]
 
+# FROM GENERATION UTILS
+# https://github.com/huggingface/transformers/blob/f7ef7cec6c6c162087421f36a17eabdbb223579d/src/transformers/generation/utils.py#L802
 logits_processor = model._get_logits_processor(
     generation_config=model.generation_config,
     input_ids_seq_length=input_ids_length,
@@ -150,6 +152,8 @@ for _ in range(TOKENS_TO_GENERATE):
     )
 
     next_token_logits = outputs.logits[:, -1, :]
+    # modifies logits with heuristics <--- whisper has some weird stuff it does
+    # we should be able to pass in a logits processor to SamplingParams in vLLM
     next_tokens_scores = logits_processor(input_ids, next_token_logits)
     next_tokens = torch.argmax(next_tokens_scores, dim=-1)
     
