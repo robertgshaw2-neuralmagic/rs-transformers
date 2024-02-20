@@ -129,12 +129,12 @@ def prepare_inputs_for_generation(
         decoder_input_ids = decoder_input_ids[:, remove_prefix_length:]
     
     return {
-        "encoder_outputs": encoder_outputs,
-        "past_key_values": past_key_values,
-        "decoder_input_ids": decoder_input_ids,
-        "use_cache": use_cache,
-        "decoder_attention_mask": decoder_attention_mask,
-        "decoder_position_ids": decoder_position_ids,
+        "encoder_outputs": encoder_outputs,                 # last layer of the encoder; 
+        "past_key_values": past_key_values,                 # past kvs for self, cross attentions
+        "decoder_input_ids": decoder_input_ids,             # input_ids to decoder
+        "use_cache": use_cache,                             # true
+        "decoder_attention_mask": decoder_attention_mask,   # none
+        "decoder_position_ids": decoder_position_ids,       # none
     }
 
 # decoding loop:
