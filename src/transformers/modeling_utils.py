@@ -326,6 +326,8 @@ def dtype_byte_size(dtype):
         return 1 / 8
     bit_search = re.search(r"[^\d](\d+)$", str(dtype))
     if bit_search is None:
+        # hack for fp8
+        return 1
         raise ValueError(f"`dtype` is not a valid dtype: {dtype}.")
     bit_size = int(bit_search.groups()[0])
     return bit_size // 8
